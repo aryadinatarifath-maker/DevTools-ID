@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevTools Online - Perkakas Gratis untuk Developer</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,sans-serif; }
+  body { background:#f1f5f9; color:#1e293b; padding-bottom:60px; }
+
+  /* HEADER */
+  header {
+    background:linear-gradient(135deg,#1e40af,#3b82f6);
+    color:white; padding:24px 16px; text-align:center;
+    box-shadow:0 2px 10px rgba(0,0,0,.15);
+  }
+  header .logo { font-size:26px; font-weight:800; margin-bottom:6px; letter-spacing:-.5px; }
+  header .logo span { color:#fbbf24; }
+  header .tagline { font-size:13px; opacity:.9; }
+  header .badge {
+    display:inline-block; background:rgba(255,255,255,.2);
+    padding:4px 12px; border-radius:20px; font-size:11px;
+    margin-top:10px; font-weight:600;
+  }
+
+  /* SEARCH */
+  .search-wrap {
+    max-width:800px; margin:-20px auto 24px;
+    padding:0 16px; position:relative; z-index:10;
+  }
+  .search-wrap input {
+    width:100%; padding:16px 20px; border:none;
+    border-radius:12px; font-size:15px;
+    box-shadow:0 4px 20px rgba(0,0,0,.08);
+  }
+  .search-wrap input:focus { outline:2px solid #3b82f6; }
+
+  /* KATEGORI */
+  .kategori-wrap {
+    display:flex; gap:8px; overflow-x:auto;
+    padding:0 16px 20px; scrollbar-width:none;
+    max-width:1100px; margin:0 auto;
+  }
+  .kategori-wrap::-webkit-scrollbar { display:none; }
+  .kategori-wrap button {
+    background:white; border:1px solid #e2e8f0; color:#475569;
+    padding:8px 16px; border-radius:20px; white-space:nowrap;
+    font-size:13px; cursor:pointer; transition:.2s; font-weight:500;
+  }
+  .kategori-wrap button.active {
+    background:#3b82f6; color:white; border-color:#3b82f6;
+  }
+
+  /* GRID TOOLS */
+  .tools-grid {
+    display:grid; grid-template-columns:repeat(2,1fr);
+    gap:12px; padding:0 16px; max-width:1100px; margin:0 auto;
+  }
+  @media(min-width:640px){ .tools-grid { grid-template-columns:repeat(3,1fr); } }
+  @media(min-width:900px){ .tools-grid { grid-template-columns:repeat(4,1fr); } }
+
+  .tool-card {
+    background:white; border-radius:12px; padding:16px;
+    text-decoration:none; color:inherit; transition:.2s;
+    border:1px solid #e2e8f0; cursor:pointer;
+    display:flex; flex-direction:column; gap:8px;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .tool-card:hover {
+    transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(59,130,246,.15);
+    border-color:#3b82f6;
+  }
+  .tool-card .icon {
+    width:40px; height:40px; border-radius:10px;
+    background:linear-gradient(135deg,#dbeafe,#bfdbfe);
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px;
+  }
+  .tool-card .nama { font-size:14px; font-weight:700; color:#1e293b; }
+  .tool-card .desc { font-size:12px; color:#64748b; line-height:1.4; }
+
+  /* HALAMAN TOOL */
+  .tool-page { display:none; padding:16px; max-width:1100px; margin:0 auto; }
+  .tool-page.active { display:block; }
+  .tool-page .back {
+    background:white; border:1px solid #e2e8f0; color:#475569;
+    padding:8px 16px; border-radius:8px; cursor:pointer;
+    font-size:13px; margin-bottom:16px; font-weight:500;
+  }
+  .tool-page h2 { font-size:22px; margin-bottom:6px; color:#1e40af; }
+  .tool-page .sub { color:#64748b; font-size:14px; margin-bottom:16px; }
+  .grid2 { display:grid; grid-template-columns:1fr; gap:12px; }
+  @media(min-width:768px){ .grid2 { grid-template-columns:1fr 1fr; } }
+  textarea {
+    width:100%; min-height:220px; padding:12px;
+    background:white; color:#1e293b; border:1px solid #e2e8f0;
+    border-radius:8px; font-family:'Courier New',monospace;
+    font-size:13px; resize:vertical;
+  }
+  textarea:focus { outline:none; border-color:#3b82f6; }
+  .btn-row { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+  .btn-row button {
+    background:#3b82f6; color:white; border:none;
+    padding:10px 18px; border-radius:8px; cursor:pointer;
+    font-weight:600; font-size:13px;
+  }
+  .btn-row button.sec { background:#e2e8f0; color:#475569; }
+  .btn-row button:hover { opacity:.9; }
+  .msg { padding:10px 14px; border-radius:8px; font-size:13px; margin-top:10px; background:#dbeafe; color:#1e40af; }
+  .msg.err { background:#fee2e2; color:#991b1b; }
+  .msg.ok { background:#dcfce7; color:#166534; }
+
+  /* FOOTER */
+  footer {
+    text-align:center; padding:24px 16px; color:#94a3b8;
+    font-size:12px; margin-top:32px;
+  }
+
+  /* WATERMARK */
+  .watermark {
+    position:fixed; bottom:0; left:0; right:0;
+    background:rgba(15,23,42,.9); color:white;
+    text-align:center; padding:8px; font-size:12px;
+    z-index:999; letter-spacing:.5px;
+  }
+  .watermark strong { color:#fbbf24; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🛠️ DevTools <span>Online</span></div>
+  <div class="tagline">Perkakas gratis untuk developer & programmer</div>
+  <div class="badge">✨ 15+ Alat Siap Pakai</div>
+</header>
+
+<div class="search-wrap">
+  <input type="text" id="search" placeholder="🔍 Cari alat... (contoh: JSON, Base64)" oninput="cariTool()">
+</div>
+
+<div class="kategori-wrap" id="kategoriBar">
+  <button class="active" onclick="filterKat('semua', this)">Semua</button>
+  <button onclick="filterKat('format', this)">📐 Formatter</button>
+  <button onclick="filterKat('encode', this)">🔐 Encoder</button>
+  <button onclick="filterKat('text', this)">📝 Teks</button>
+  <button onclick="filterKat('generate', this)">⚡ Generator</button>
+</div>
+
+<div class="tools-grid" id="toolsGrid"></div>
+
+<!-- ============ HALAMAN TOOLS ============ -->
+
+<section class="tool-page" id="page-json">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>JSON Formatter & Validator</h2>
+  <p class="sub">Rapikan, validasi, dan perkecil kode JSON.</p>
+  <div class="grid2">
+    <textarea id="jsonIn" placeholder='{"nama":"Bos","umur":30}'></textarea>
+    <textarea id="jsonOut" readonly placeholder="Hasil muncul di sini..."></textarea>
+  </div>
+  <div class="btn-row">
+    <button onclick="fmtJSON()">Rapikan</button>
+    <button class="sec" onclick="minJSON()">Perkecil</button>
+    <button class="sec" onclick="clearT('json')">Hapus</button>
+    <button class="sec" onclick="copyT('jsonOut')">Copy</button>
+  </div>
+  <div class="msg" id="jsonMsg">Masukkan JSON lalu klik Rapikan.</div>
+</section>
+
+<section class="tool-page" id="page-html">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>HTML Formatter</h2>
+  <p class="sub">Rapikan kode HTML agar mudah dibaca.</p>
+  <div class="grid2">
+    <textarea id="htmlIn" placeholder="<div><p>Halo</p></div>"></textarea>
+    <textarea id="htmlOut" readonly></textarea>
+  </div>
+  <div class="btn-row">
+    <button onclick="fmtHTML()">Rapikan</button>
+    <button class="sec" onclick="clearT('html')">Hapus</button>
+    <button class="sec" onclick="copyT('htmlOut')">Copy</button>
+  </div>
+</section>
+
+<section class="tool-page" id="page-css">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>CSS Minifier</h2>
+  <p class="sub">Perkecil ukuran file CSS.</p>
+  <div class="grid2">
+    <textarea id="cssIn" placeholder="body { color: red; }"></textarea>
+    <textarea id="cssOut" readonly></textarea>
+  </div>
+  <div class="btn-row">
+    <button onclick="minCSS()">Perkecil</button>
+    <button class="sec" onclick="clearT('css')">Hapus</button>
+    <button class="sec" onclick="copyT('cssOut')">Copy</button>
+  </div>
+</section>
+
+<section class="tool-page" id="page-js">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>JavaScript Minifier</h2>
+  <p class="sub">Hapus komentar & spasi berlebih dari kode JS.</p>
+  <div class="grid2">
+    <textarea id="jsIn" placeholder="function halo() { return 'hai'; }"></textarea>
+    <textarea id="jsOut" readonly></textarea>
+  </div>
+  <div class="btn-row">
+    <button onclick="minJS()">Perkecil</button>
+    <button class="sec" onclick="clearT('js')">Hapus</button>
+    <button class="sec" onclick="copyT('jsOut')">Copy</button>
+  </div>
+</section>
+
+<section class="tool-page" id="page-b64">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>Base64 Encoder / Decoder</h2>
+  <p class="sub">Ubah teks ke Base64 dan sebaliknya.</p>
+  <div class="grid2">
+    <textarea id="b64In" placeholder="Masukkan teks..."></textarea>
+    <textarea id="b64Out" readonly></textarea>
+  </div>
+  <div class="btn-row">
+    <button onclick="encB64()">Encode</button>
+    <button class="sec" onclick="decB64()">Decode</button>
+    <button class="sec" onclick="clearT('b64')">Hapus</button>
+    <button class="sec" onclick="copyT('b64Out')">Copy</button>
+  </div>
+  <div class="msg" id="b64Msg"></div>
+</section>
+
+<section class="tool-page" id="page-url">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>URL Encoder / Decoder</h2>
+  <p class="sub">Encode atau decode URL.</p>
+  <div class="grid2">
+    <textarea id="urlIn" placeholder="https://contoh.com?q=halo dunia"></textarea>
+    <textarea id="urlOut" readonly></textarea>
+  </div>
+  <div class="btn-row">
+    <button onclick="encURL()">Encode</button>
+    <button class="sec" onclick="decURL()">Decode</button>
+    <button class="sec" onclick="clearT('url')">Hapus</button>
+    <button class="sec" onclick="copyT('urlOut')">Copy</button>
+  </div>
+</section>
+
+<section class="tool-page" id="page-case">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>Case Converter</h2>
+  <p class="sub">Ubah huruf besar/kecil teks.</p>
+  <div class="grid2">
+    <textarea id="caseIn" placeholder="Masukkan teks..."></textarea>
+    <textarea id="caseOut" readonly></textarea>
+  </div>
+  <div class="btn-row">
+    <button onclick="doCase('upper')">HURUF BESAR</button>
+    <button class="sec" onclick="doCase('lower')">huruf kecil</button>
+    <button class="sec" onclick="doCase('title')">Huruf Kapital</button>
+    <button class="sec" onclick="doCase('sentence')">Kalimat biasa</button>
+    <button class="sec" onclick="clearT('case')">Hapus</button>
+  </div>
+</section>
+
+<section class="tool-page" id="page-count">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>Word & Character Counter</h2>
+  <p class="sub">Hitung jumlah kata, karakter, dan baris.</p>
+  <textarea id="countIn" placeholder="Tulis atau tempel teks..." oninput="doCount()" style="min-height:280px;"></textarea>
+  <div class="msg" id="countMsg">Kata: 0 | Karakter: 0 | Baris: 0</div>
+</section>
+
+<section class="tool-page" id="page-uuid">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>UUID Generator</h2>
+  <p class="sub">Buat ID unik (UUID v4).</p>
+  <textarea id="uuidOut" readonly placeholder="Klik Buat UUID"></textarea>
+  <div class="btn-row">
+    <button onclick="genUUID()">Buat 1 UUID</button>
+    <button class="sec" onclick="genUUID(5)">Buat 5 Sekaligus</button>
+    <button class="sec" onclick="document.getElementById('uuidOut').value=''">Hapus</button>
+    <button class="sec" onclick="copyT('uuidOut')">Copy</button>
+  </div>
+</section>
+
+<section class="tool-page" id="page-lorem">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>Lorem Ipsum Generator</h2>
+  <p class="sub">Buat teks dummy untuk design.</p>
+  <textarea id="loremOut" readonly style="min-height:240px;"></textarea>
+  <div class="btn-row">
+    <button onclick="genLorem(1)">1 Paragraf</button>
+    <button class="sec" onclick="genLorem(3)">3 Paragraf</button>
+    <button class="sec" onclick="genLorem(5)">5 Paragraf</button>
+    <button class="sec" onclick="copyT('loremOut')">Copy</button>
+  </div>
+</section>
+
+<section class="tool-page" id="page-pass">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>Password Generator</h2>
+  <p class="sub">Buat password kuat & acak.</p>
+  <textarea id="passOut" readonly style="min-height:120px;"></textarea>
+  <div class="btn-row">
+    <button onclick="genPass(12)">12 Karakter</button>
+    <button class="sec" onclick="genPass(16)">16 Karakter</button>
+    <button class="sec" onclick="genPass(24)">24 Karakter</button>
+    <button class="sec" onclick="copyT('passOut')">Copy</button>
+  </div>
+</section>
+
+<section class="tool-page" id="page-hash">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>MD5 Hash Generator</h2>
+  <p class="sub">Buat hash MD5 dari teks.</p>
+  <textarea id="hashIn" placeholder="Masukkan teks..." oninput="doMD5()" style="min-height:140px;"></textarea>
+  <textarea id="hashOut" readonly placeholder="Hash MD5 muncul di sini..." style="min-height:80px;"></textarea>
+  <div class="btn-row">
+    <button class="sec" onclick="copyT('hashOut')">Copy Hash</button>
+  </div>
+</section>
+
+<section class="tool-page" id="page-color">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>Color Converter</h2>
+  <p class="sub">Ubah HEX ke RGB dan sebaliknya.</p>
+  <input type="color" id="colorPick" value="#3b82f6" oninput="doColor()" style="width:100%; height:80px; border-radius:8px; border:none; cursor:pointer; margin-bottom:12px;">
+  <div class="grid2">
+    <textarea id="colorHex" placeholder="#3b82f6" oninput="hexToRgb()" style="min-height:80px;"></textarea>
+    <textarea id="colorRgb" placeholder="rgb(59,130,246)" oninput="rgbToHex()" style="min-height:80px;"></textarea>
+  </div>
+</section>
+
+<section class="tool-page" id="page-timestamp">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>Timestamp Converter</h2>
+  <p class="sub">Ubah Unix timestamp ke tanggal dan sebaliknya.</p>
+  <textarea id="tsIn" placeholder="Masukkan timestamp atau tanggal..." oninput="doTS()" style="min-height:100px;"></textarea>
+  <textarea id="tsOut" readonly style="min-height:100px;"></textarea>
+  <div class="btn-row">
+    <button onclick="document.getElementById('tsIn').value=Math.floor(Date.now()/1000); doTS()">Timestamp Sekarang</button>
+  </div>
+</section>
+
+<section class="tool-page" id="page-slug">
+  <button class="back" onclick="kembali()">← Kembali</button>
+  <h2>Slug Generator</h2>
+  <p class="sub">Ubah judul jadi URL-friendly slug.</p>
+  <textarea id="slugIn" placeholder="Judul Artikel Yang Panjang" oninput="doSlug()" style="min-height:100px;"></textarea>
+  <textarea id="slugOut" readonly style="min-height:80px;"></textarea>
+  <div class="btn-row">
+    <button class="sec" onclick="copyT('slugOut')">Copy</button>
+  </div>
+</section>
+
+<footer>
+  © 2025 DevTools Online • Perkakas gratis untuk developer Indonesia
+</footer>
+
+<div class="watermark">
+  ⚠️ <strong>DEMO</strong> — Website contoh. Belum dibayar. Hubungi: 0812-3456-7890
+</div>
+
+<script>
+// ============ DATA TOOLS ============
+const tools = [
+  {id:'json', nama:'JSON Formatter', desc:'Rapikan & validasi kode JSON', icon:'📋', kat:'format'},
+  {id:'html', nama:'HTML Formatter', desc:'Rapikan indentasi HTML', icon:'🌐', kat:'format'},
+  {id:'css', nama:'CSS Minifier', desc:'Perkecil file CSS', icon:'🎨', kat:'format'},
+  {id:'js', nama:'JS Minifier', desc:'Hapus komentar & spasi JS', icon:'⚡', kat:'format'},
+  {id:'b64', nama:'Base64', desc:'Encode / decode Base64', icon:'🔐', kat:'encode'},
+  {id:'url', nama:'URL Encoder', desc:'Encode / decode URL', icon:'🔗', kat:'encode'},
+  {id:'hash', nama:'MD5 Hash', desc:'Buat hash MD5 dari teks', icon:'#️⃣', kat:'encode'},
+  {id:'case', nama:'Case Converter', desc:'Ubah huruf besar/kecil', icon:'🔤', kat:'text'},
+  {id:'count', nama:'Word Counter', desc:'Hitung kata & karakter', icon:'📊', kat:'text'},
+  {id:'slug', nama:'Slug Generator', desc:'Ubah judul jadi slug URL', icon:'📝', kat:'text'},
+  {id:'uuid', nama:'UUID Generator', desc:'Buat ID unik v4', icon:'🆔', kat:'generate'},
+  {id:'lorem', nama:'Lorem Ipsum', desc:'Teks dummy untuk design', icon:'📄', kat:'generate'},
+  {id:'pass', nama:'Password Generator', desc:'Password kuat & acak', icon:'🔑', kat:'generate'},
+  {id:'color', nama:'Color Converter', desc:'Ubah HEX ↔ RGB', icon:'🌈', kat:'generate'},
+  {id:'timestamp', nama:'Timestamp', desc:'Unix ↔ tanggal', icon:'⏰', kat:'generate'}
+];
+
+// ============ RENDER TOOLS ============
+function renderTools(data){
+  const grid = document.getElementById('toolsGrid');
+  if(data.length === 0){
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">😕 Tidak ditemukan</div>';
+    return;
+  }
+  grid.innerHTML = data.map(t => `
+    <div class="tool-card" onclick="bukaTool('${t.id}')">
+      <div class="icon">${t.icon}</div>
+      <div class="nama">${t.nama}</div>
+      <div class="desc">${t.desc}</div>
+    </div>
+  `).join('');
+}
+
+// ============ NAVIGASI ============
+function bukaTool(id){
+  document.querySelector('.tools-grid').style.display = 'none';
+  document.querySelector('.kategori-wrap').style.display = 'none';
+  document.querySelector('.search-wrap').style.display = 'none';
+  document.querySelectorAll('.tool-page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if(page) page.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function kembali(){
+  document.querySelector('.tools-grid').style.display = 'grid';
+  document.querySelector('.kategori-wrap').style.display = 'flex';
+  document.querySelector('.search-wrap').style.display = 'block';
+  document.querySelectorAll('.tool-page').forEach(p => p.classList.remove('active'));
+  window.scrollTo(0,0);
+}
+
+// ============ FILTER & SEARCH ============
+function filterKat(kat, btn){
+  document.querySelectorAll('#kategoriBar button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const hasil = kat === 'semua' ? tools : tools.filter(t => t.kat === kat);
+  renderTools(hasil);
+}
+
+function cariTool(){
+  const q = document.getElementById('search').value.toLowerCase();
+  const hasil = tools.filter(t => t.nama.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q));
+  renderTools(hasil);
+}
+
+// ============ UTILITIES ============
+function copyT(id){
+  const t = document.getElementById(id);
+  if(!t.value) return;
+  t.select();
+  navigator.clipboard.writeText(t.value).then(() => alert('✅ Tersalin!'));
+}
+
+function clearT(id){
+  document.querySelectorAll(`#page-${id} textarea`).forEach(t => {
+    if(!t.readOnly) t.value = '';
+  });
+}
+
+function setMsg(id, msg, type = ''){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = msg;
+  el.className = 'msg ' + type;
+}
+
+// ============ TOOL FUNCTIONS ============
+function fmtJSON(){
+  try {
+    const o = JSON.parse(document.getElementById('jsonIn').value);
+    document.getElementById('jsonOut').value = JSON.stringify(o, null, 2);
+    setMsg('jsonMsg', '✅ JSON valid!', 'ok');
+  } catch(e){ setMsg('jsonMsg', '❌ ' + e.message, 'err'); }
+}
+
+function minJSON(){
+  try {
+    const o = JSON.parse(document.getElementById('jsonIn').value);
+    document.getElementById('jsonOut').value = JSON.stringify(o);
+    setMsg('jsonMsg', '✅ Diperkecil.', 'ok');
+  } catch(e){ setMsg('jsonMsg', '❌ ' + e.message, 'err'); }
+}
+
+function fmtHTML(){
+  let h = document.getElementById('htmlIn').value;
+  h = h.replace(/>\s*</g, '>\n<');
+  let ind = 0;
+  h = h.split('\n').map(line => {
+    line = line.trim();
+    if(line.match(/^<\//)) ind = Math.max(ind - 1, 0);
+    const pad = '  '.repeat(ind);
+    if(line.match(/^<[^\/][^>]*[^\/]>$/) && !line.match(/^<(br|hr|img|input|meta|link)/i)) ind++;
+    return pad + line;
+  }).join('\n');
+  document.getElementById('htmlOut').value = h;
+}
+
+function minCSS(){
+  let c = document.getElementById('cssIn').value;
+  c = c.replace(/\/\*[\s\S]*?\*\//g, '')
+       .replace(/\s+/g, ' ')
+       .replace(/\s*([{}:;,>])\s*/g, '$1')
+       .replace(/;}/g, '}');
+  document.getElementById('cssOut').value = c.trim();
+}
+
+function minJS(){
+  let j = document.getElementById('jsIn').value;
+  j = j.replace(/\/\*[\s\S]*?\*\//g, '')
+       .replace(/\/\/.*$/gm, '')
+       .replace(/\s+/g, ' ')
+       .replace(/\s*([{}();,:=\+\-\*\/<>])\s*/g, '$1');
+  document.getElementById('jsOut').value = j.trim();
+}
+
+function encB64(){
+  try {
+    const t = document.getElementById('b64In').value;
+    document.getElementById('b64Out').value = btoa(unescape(encodeURIComponent(t)));
+    setMsg('b64Msg', '✅ Encoded.', 'ok');
+  } catch(e){ setMsg('b64Msg', '❌ ' + e.message, 'err'); }
+}
+
+function decB64(){
+  try {
+    const t = document.getElementById('b64In').value;
+    document.getElementById('b64Out').value = decodeURIComponent(escape(atob(t)));
+    setMsg('b64Msg', '✅ Decoded.', 'ok');
+  } catch(e){ setMsg('b64Msg', '❌ Base64 tidak valid.', 'err'); }
+}
+
+function encURL(){
+  document.getElementById('urlOut').value = encodeURIComponent(document.getElementById('urlIn').value);
+}
+
+function decURL(){
+  try {
+    document.getElementById('urlOut').value = decodeURIComponent(document.getElementById('urlIn').value);
+  } catch(e){ alert('URL tidak valid'); }
+}
+
+function doCase(type){
+  let t = document.getElementById('caseIn').value;
+  if(type === 'upper') t = t.toUpperCase();
+  if(type === 'lower') t = t.toLowerCase();
+  if(type === 'title') t = t.replace(/\w\S*/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase());
+  if(type === 'sentence') t = t.toLowerCase().replace(/(^\s*\w|[.!?]\s*\w)/g, c => c.toUpperCase());
+  document.getElementById('caseOut').value = t;
+}
+
+function doCount(){
+  const t = document.getElementById('countIn').value;
+  const words = t.trim() ? t.trim().split(/\s+/).length : 0;
+  const lines = t ? t.split('\n').length : 0;
+  setMsg('countMsg', `Kata: ${words} | Karakter: ${t.length} | Baris: ${lines}`);
+}
+
+function genUUID(n = 1){
+  let hasil = [];
+  for(let i = 0; i < n; i++){
+    const u = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+    hasil.push(u);
+  }
+  document.getElementById('uuidOut').value = hasil.join('\n');
+}
+
+function genLorem(n){
+  const kata = ['lorem','ipsum','dolor','sit','amet','consectetur','adipiscing','elit','sed','do','eiusmod','tempor','incididunt','ut','labore','et','dolore','magna','aliqua','enim','ad','minim','veniam','quis','nostrud','exercitation','ullamco','laboris','nisi','aliquip','ex','ea','commodo','consequat'];
+  let hasil = [];
+  for(let p = 0; p < n; p++){
+    let paragraf = [];
+    for(let i = 0; i < 50; i++){
+      paragraf.push(kata[Math.floor(Math.random() * kata.length)]);
+    }
+    let s = paragraf.join(' ');
+    s = s.charAt(0).toUpperCase() + s.slice(1) + '.';
+    hasil.push(s);
+  }
+  document.getElementById('loremOut').value = hasil.join('\n\n');
+}
+
+function genPass(len){
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+  let p = '';
+  for(let i = 0; i < len; i++){
+    p += chars[Math.floor(Math.random() * chars.length)];
+  }
+  document.getElementById('passOut').value = p;
+}
+
+// MD5 sederhana (pure JS)
+function md5(str){
+  function rl(n, c){ return (n << c) | (n >>> (32 - c)); }
+  function au(x, y){ const l = (x & 0xFFFF) + (y & 0xFFFF); return (((x >> 16) + (y >> 16) + (l >> 16)) << 16) | (l & 0xFFFF); }
+  function cmn(q, a, b, x, s, t){ return au(rl(au(au(a, q), au(x, t)), s), b); }
+  function ff(a, b, c, d, x, s, t){ return cmn((b & c) | (~b & d), a, b, x, s, t); }
+  function gg(a, b, c, d, x, s, t){ return cmn((b & d) | (c & ~d), a, b, x, s, t); }
+  function hh(a, b, c, d, x, s, t){ return cmn(b ^ c ^ d, a, b, x, s, t); }
+  function ii(a, b, c, d, x, s, t){ return cmn(c ^ (b | ~d), a, b, x, s, t); }
+  function tb(str){
+    let bytes = [], i;
+    for(i = 0; i < str.length * 8; i += 8){ bytes[i >> 5] |= (str.charCodeAt(i / 8) & 0xFF) << (i % 32); }
+    return bytes;
+  }
+  function bh(str){
+    let bytes = [], i;
+    for(i = 0; i < str.length * 8; i += 8){ bytes[i >> 5] |= (str.charCodeAt(i / 8) & 0xFF) << (i % 32); }
+    return bytes;
+  }
+  function hex(num){ let s = ''; for(let i = 0; i < 4; i++){ s += ('0' + ((num >> (i * 8)) & 0xFF).toString(16)).slice(-2); } return s; }
+  function utf8(str){ return unescape(encodeURIComponent(str)); }
+  str = utf8(str);
+  let x = bh(str);
+  const len = str.length * 8;
+  x[len >> 5] |= 0x80 << ((len) % 32);
+  x[(((len + 64) >>> 9) << 4) + 14] = len;
+  let a = 1732584193, b = -271733879, c = -1732584194, d = 271733878;
+  for(let i = 0; i < x.length; i += 16){
+    let oa = a, ob = b, oc = c, od = d;
+    a = ff(a, b, c, d, x[i + 0], 7, -680876936); d = ff(d, a, b, c, x[i + 1], 12, -389564586); c = ff(c, d, a, b, x[i + 2], 17, 606105819); b = ff(b, c, d, a, x[i + 3], 22, -1044525330);
+    a = ff(a, b, c, d, x[i + 4], 7, -176418897); d = ff(d, a, b, c, x[i + 5], 12, 1200080426); c = ff(c, d, a, b, x[i + 6], 17, -1473231341); b = ff(b, c, d, a, x[i + 7], 22, -45705983);
+    a = ff(a, b, c, d, x[i + 8], 7, 1770035416); d = ff(d, a, b, c, x[i + 9], 12, -1958414417); c = ff(c, d, a, b, x[i + 10], 17, -42063); b = ff(b, c, d, a, x[i + 11], 22, -1990404162);
+    a = ff(a, b, c, d, x[i + 12], 7, 1804603682); d = ff(d, a, b, c, x[i + 13], 12, -40341101); c = ff(c, d, a, b, x[i + 14], 17, -1502002290); b = ff(b, c, d, a, x[i + 15], 22, 1236535329);
+    a = gg(a, b, c, d, x[i + 1], 5, -165796510); d = gg(d, a, b, c, x[i + 6], 9, -1069501632); c = gg(c, d, a, b, x[i + 11], 14, 643717713); b = gg(b, c, d, a, x[i + 0], 20, -373897302);
+    a = gg(a, b, c, d, x[i + 5], 5, -701558691); d = gg(d, a, b, c, x[i + 10], 9, 38016083); c = gg(c, d, a, b, x[i + 15], 14, -660478335); b = gg(b, c, d, a, x[i + 4], 20, -405537848);
+    a = gg(a, b, c, d, x[i + 9], 5, 568446438); d = gg(d, a, b, c, x[i + 14], 9, -1019803690); c = gg(c, d, a, b, x[i + 3], 14, -187363961); b = gg(b, c, d, a, x[i + 8], 20, 1163531501);
+    a = gg(a, b, c, d, x[i + 13], 5, -1444681467); d = gg(d, a, b, c, x[i + 2], 9, -51403784); c = gg(c, d, a, b, x[i + 7], 14, 1735328473); b = gg(b, c, d, a, x[i + 12], 20, -1926607734);
+    a = hh(a, b, c, d, x[i + 5], 4, -378558); d = hh(d, a, b, c, x[i + 8], 11, -2022574463); c = hh(c, d, a, b, x[i + 11], 16, 1839030562); b = hh(b, c, d, a, x[i + 14], 23, -35309556);
+    a = hh(a, b, c, d, x[i + 1], 4, -1530992060); d = hh(d, a, b, c, x[i + 4], 11, 1272893353); c = hh(c, d, a, b, x[i + 7], 16, -155497632); b = hh(b, c, d, a, x[i + 10], 23, -1094730640);
+    a = hh(a, b, c, d, x[i + 13], 4, 681279174); d = hh(d, a, b, c, x[i + 0], 11, -358537222); c = hh(c, d, a, b, x[i + 3], 16, -722521979); b = hh(b, c, d, a, x[i + 6], 23, 76029189);
+    a = hh(a, b, c, d, x[i + 9], 4, -640364487); d = hh(d, a, b, c, x[i + 12], 11, -421815835); c = hh(c, d, a, b, x[i + 15], 16, 530742520); b = hh(b, c, d, a, x[i + 2], 23, -995338651);
+    a = ii(a, b, c, d, x[i + 0], 6, -198630844); d = ii(d, a, b, c, x[i + 7], 10, 1126891415); c = ii(c, d, a, b, x[i + 14], 15, -1416354905); b = ii(b, c, d, a, x[i + 5], 21, -57434055);
+    a = ii(a, b, c, d, x[i + 12], 6, 1700485571); d = ii(d, a, b, c, x[i + 3], 10, -1894986606); c = ii(c, d, a, b, x[i + 10], 15, -1051523); b = ii(b, c, d, a, x[i + 1], 21, -2054922799);
+    a = ii(a, b, c, d, x[i + 8], 6, 1873313359); d = ii(d, a, b, c, x[i + 15], 10, -30611744); c = ii(c, d, a, b, x[i + 6], 15, -1560198380); b = ii(b, c, d, a, x[i + 13], 21, 1309151649);
+    a = ii(a, b, c, d, x[i + 4], 6, -145523070); d = ii(d, a, b, c, x[i + 11], 10, -1120210379); c = ii(c, d, a, b, x[i + 2], 15, 718787259); b = ii(b, c, d, a, x[i + 9], 21, -343485551);
+    a = au(a, oa); b = au(b, ob); c = au(c, oc); d = au(d, od);
+  }
+  return hex(a) + hex(b) + hex(c) + hex(d);
+}
+
+function doMD5(){
+  const t = document.getElementById('hashIn').value;
+  document.getElementById('hashOut').value = t ? md5(t) : '';
+}
+
+function doColor(){
+  const c = document.getElementById('colorPick').value;
+  document.getElementById('colorHex').value = c;
+  const r = parseInt(c.substr(1,2),16), g = parseInt(c.substr(3,2),16), b = parseInt(c.substr(5,2),16);
+  document.getElementById('colorRgb').value = `rgb(${r},${g},${b})`;
+}
+
+function hexToRgb(){
+  const c = document.getElementById('colorHex').value;
+  const m = c.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+  if(m){
+    const r = parseInt(m[1],16), g = parseInt(m[2],16), b = parseInt(m[3],16);
+    document.getElementById('colorRgb').value = `rgb(${r},${g},${b})`;
+    document.getElementById('colorPick').value = '#' + m[1] + m[2] + m[3];
+  }
+}
+
+function rgbToHex(){
+  const t = document.getElementById('colorRgb').value;
+  const m = t.match(/(\d+)\D+(\d+)\D+(\d+)/);
+  if(m){
+    const hex = '#' + [m[1],m[2],m[3]].map(n => ('0' + parseInt(n).toString(16)).slice(-2)).join('');
+    document.getElementById('colorHex').value = hex;
+    document.getElementById('colorPick').value = hex;
+  }
+}
+
+function doTS(){
+  const t = document.getElementById('tsIn').value.trim();
+  if(!t){ document.getElementById('tsOut').value = ''; return; }
+  if(/^\d+$/.test(t)){
+    const d = new Date(parseInt(t) * 1000);
+    document.getElementById('tsOut').value = `📅 ${d.toLocaleString('id-ID')}\n🌍 ISO: ${d.toISOString()}\n⏰ Unix: ${t}`;
+  } else {
+    const d = new Date(t);
+    if(isNaN(d)){ document.getElementById('tsOut').value = '❌ Format tidak valid'; return; }
+    document.getElementById('tsOut').value = `⏰ Unix: ${Math.floor(d.getTime()/1000)}\n📅 Lokal: ${d.toLocaleString('id-ID')}\n🌍 ISO: ${d.toISOString()}`;
+  }
+}
+
+function doSlug(){
+  let s = document.getElementById('slugIn').value.toLowerCase();
+  s = s.replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-').replace(/-+/g, '-');
+  document.getElementById('slugOut').value = s;
+}
+
+// ============ INIT ============
+renderTools(tools);
+</script>
+
+</body>
+</html>
